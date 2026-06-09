@@ -1,9 +1,11 @@
 # Task 1: Store Customers Orders
+from unittest.util import sorted_list_difference
 
-#  List of customers (name)
+#  Create a list of customer names --- List of customers (name)
 customers = ["Erik", "Emma", "Lars", "Sophie", "Ingrid", "Oliver", "Astrid"]
 
-#  List of order details as tuples (customer_name, product, price, category)
+#  Store each customer's order details (customer name, product, price, category) as
+# tuples inside a list --- List of order details as tuples (customer_name, product, price, category)
 orders = [
     ("Erik", "Laptop", 899.99, "Electronics"),
     ("Erik", "T-shirt", 29.99, "Clothing"),
@@ -24,7 +26,8 @@ orders = [
     ("Astrid", "Curtains", 79.99, "Home Essentials"),
 ]
 
-#  Dictionary: key = customer_name, value = list of ordered products
+#  Use a dictionary where keys are customer names and values are lists of ordered
+# products --- Dictionary: key = customer_name, value = list of ordered products
 customer_products = {}
 
 for order in orders:
@@ -55,7 +58,7 @@ for customer, products in customer_products.items():
 
 #  Task 2: Classify Products by Category
 
-#  Mapping product -> category
+#  Use a dictionary to map each product to its respective category --- Mapping product -> category
 product_category = {}
 
 for order in orders:
@@ -64,7 +67,7 @@ for order in orders:
 
     product_category[product] = category
 
-#  Set of unique product categories
+#  Create a set of unique product categories --- Set of unique product categories
 categories = set()
 
 for order in orders:
@@ -90,7 +93,7 @@ for category in categories:
 
 #  Task 3: Analyze Customer Orders
 
-#  Total spending $ per customer
+#  Use a loop to calculate the total amount each customer spends --- Total spending $ per customer
 customer_spending = {}
 
 for order in orders:
@@ -102,6 +105,9 @@ for order in orders:
     else:
         customer_spending[customer] = price
 
+#  If the total purchase value is above $100, classify the customer as a high-value buyer,
+#  If it is between $50 and $100, classify the customer as a moderate buyer,
+#  If it is below $50, classify them as a low-value buyer
 #  Classification of customers based on total $ spending
 customer_classification = {}
 
@@ -127,3 +133,105 @@ print("\n2. Customer classification:")
 for customer, classification in customer_classification.items():
     total = customer_spending[customer]
     print(f"{customer}: {classification} (${total})")
+
+# Task 4: Generate business insights
+
+# Calculate the total revenue per product category and store it in a dictionary
+category_revenue = {}
+
+for order in orders:
+    category = order[3]
+    price = order[2]
+
+    if category in category_revenue:
+        category_revenue[category] += price
+    else:
+        category_revenue[category] = price
+
+# Extract unique products from all orders using a set
+unique_products = set()
+
+for order in orders:
+    unique_products.add(order[1])
+
+# Use a list comprehension to find all customers who purchased electronics
+electronics_buyers = [
+    order[0] for order in orders if "Electronics" in order[3]
+]
+
+#  Identify the top three highest-spending customers using sorting
+sorted_customers = sorted(
+    customer_spending.items(),
+    key=lambda x: x[1],
+    reverse=True,
+)
+
+top_three_customers = sorted_customers[:3]
+
+# ------- OUTPUT -----------
+print("=" * 20)
+print("TASK 4: Analyze Customer Orders")
+print("=" * 20)
+
+print("\n1. Total revenue per product category:")
+for category, revenue in category_revenue.items():
+    print(f"{category}: {revenue}")
+
+print("\n2. Unique products from all orders:")
+print(unique_products)
+
+print("\n3. Electronics buyers:")
+print(electronics_buyers)
+
+print("\n4. Top 3 customers:")
+print(top_three_customers)
+
+# Task 5: Organize and display data
+
+# Print a summary of each customer's total spending and their classification
+print("\n")
+print("=" * 20)
+print("TASK 5: Organize and Display Data")
+print("=" * 20)
+
+print("\n1. Customer spending summary:")
+for customer, total in customer_spending.items():
+    classification = customer_classification[customer]
+    print(f"{customer}: ${total:.2f} - {classification}")
+
+# Use set operations to find customers who purchased from multiple categories
+customer_categories = {}
+for order in orders:
+    customer = order[0]
+    category = order[3]
+
+    if customer in customer_categories:
+        customer_categories[customer].append(category)
+    else:
+        customer_categories[customer] = [category]
+
+multiple_category_customers = {
+    customer
+    for customer, categories in customer_categories.items()
+    if len(categories) > 1
+}
+
+print("=" * 20)
+print("\n2: Customers who purchased from multiple categories:")
+print(multiple_category_customers)
+
+# Identify common customers who bought both electronics and clothing
+electronics_customers = set(electronics_buyers)
+clothing_customers = {
+    order[0]
+    for order in orders
+    if "Clothing" in order[3]
+}
+
+electronics_and_clothing_buyers = electronics_customers & clothing_customers
+print("=" * 20)
+print("\n3. Customer who bought both Electronics and Clothing:")
+print(electronics_and_clothing_buyers)
+
+
+# Identify common customers who bought both electronics and clothing
